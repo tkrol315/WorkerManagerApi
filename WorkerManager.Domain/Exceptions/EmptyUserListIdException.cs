@@ -2,9 +2,9 @@
 
 namespace WorkerManager.Domain.Exceptions
 {
-    public class EmptyUserListGuidException : WorkerManagerException
+    public class EmptyUserListIdException : WorkerManagerException
     {
-        public EmptyUserListGuidException() : base("User list id cannot be empty.")
+        public EmptyUserListIdException() : base("User list id cannot be empty.")
         {
         }
     }

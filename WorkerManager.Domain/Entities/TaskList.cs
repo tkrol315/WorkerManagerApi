@@ -5,7 +5,12 @@ namespace WorkerManager.Domain.Entities
 {
     public class TaskList
     {
-        public Guid Id { get; private set; }
+        public TaskListId Id { get; private set; }
+
+        internal TaskList(TaskListId id)
+        {
+            Id = id;
+        }
 
         private LinkedList<Task> _tasks = new();
 
@@ -35,7 +40,7 @@ namespace WorkerManager.Domain.Entities
             _tasks.Remove(foundTask);
         }
 
-        
+     
        
     }
 }
