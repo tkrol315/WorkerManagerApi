@@ -1,0 +1,11 @@
+﻿using WorkerManager.Shared.Abstractions.Exceptions;
+
+namespace WorkerManager.Application.Exceptions
+{
+    public class RoleIdOutOfRangeException : WorkerManagerException
+    {
+        public RoleIdOutOfRangeException() : base("Role Id must be in range <0,1>.")
+        {
+        }
+    }
+}

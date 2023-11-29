@@ -6,48 +6,32 @@ namespace WorkerManager.Domain.Entities
     public class User
     {
         public UserId Id { get; private set; }
-        private UserName _name;
-        private PasswordHash _passwordHash;
-        private TaskList? _taskList;
-        protected uint _roleId { get; private set; }
-        public Task? _assignedTask { get; private set; }
+        public UserName UserName { get; private set; }
+        public PasswordHash PasswordHash { get; set; }
+        public TaskList? TaskList { get; private set; }
+        public uint RoleId { get; private set; }
+        public Task? AssignedTask { get; private set; }
 
-        internal User(UserId id, UserName name, PasswordHash passwordHash)
+        internal User(UserId id, UserName userName, PasswordHash passwordHash, uint roleId)
         {
             Id = id;
-            _name = name;
-            _passwordHash = passwordHash;
-            _roleId = 0;
+            UserName = userName;
+            RoleId = roleId;
+            if(RoleId == 1)
+            {
+                TaskList = new(Guid.NewGuid());
+            }
         }
-        internal User(UserId id, UserName name, PasswordHash passwordHash, TaskListId taskListId)
-        {
-            Id = id;
-            _name = name;
-            _passwordHash = passwordHash;
-            _roleId = 1;
-            _taskList = new(taskListId);
-        }
+      
 
-        public void MarkTaskAsCompleted()
+        public void ClearAssignedTask()
         {
-           var foundTask = _assignedTask.Creator._taskList.GetTask(_assignedTask.Name);
-            foundTask.IsCompleted = true;
-            _assignedTask = null;
+            AssignedTask = null;
         }
-    
-        public void AssignTaskToWorker(string taskName, User user)
+        public void SetAssignedTask(Task task)
         {
-            var foundTask = _taskList.GetTask(taskName);
-            if (foundTask.AssignedToUserId is not null)
-            {
-                throw new TaskAlreadyAssignedException(foundTask.Id);
-            }
-            if (!_assignedTask.IsCompleted && _assignedTask is not null)
-            {
-                throw new UserTaskAlreadyAssignedException(Id);
-            }
-            user._assignedTask = foundTask;
-            foundTask.IsAssigned = true;
+            AssignedTask = task;
         }
-    }
+        
+    }   
 }

@@ -23,6 +23,10 @@ namespace WorkerManager.Domain.Entities
             }
             return task;
         }
+        public LinkedList<Task> GetTasks()
+        {
+            return _tasks;
+        }
         public void AddTask(Task task)
         {
             var alreadyExits = _tasks.Any(t => t.Name == task.Name);
@@ -39,8 +43,6 @@ namespace WorkerManager.Domain.Entities
 
             _tasks.Remove(foundTask);
         }
-
      
-       
     }
 }

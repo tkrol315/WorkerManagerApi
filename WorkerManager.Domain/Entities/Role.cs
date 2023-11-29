@@ -1,9 +1,11 @@
-﻿namespace WorkerManager.Domain.Entities
+﻿using WorkerManager.Domain.ValueObjects;
+
+namespace WorkerManager.Domain.Entities
 {
     public class Role
     {
-        public uint Id { get; set; }
-        public string Name { get; set; }
+        public RoleId Id { get; private set; }
+        public RoleName Name { get; private set; }
 
     }
 }

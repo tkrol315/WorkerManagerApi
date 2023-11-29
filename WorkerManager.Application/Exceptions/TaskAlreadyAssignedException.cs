@@ -1,6 +1,6 @@
 ﻿using WorkerManager.Shared.Abstractions.Exceptions;
 
-namespace WorkerManager.Domain.Exceptions
+namespace WorkerManager.Application.Exceptions
 {
     public class TaskAlreadyAssignedException : WorkerManagerException
     {
