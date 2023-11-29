@@ -2,21 +2,21 @@
 
 namespace WorkerManager.Domain.ValueObjects
 {
-    public record UserName
+    public record Username
     {
         public string Value { get;}
 
-        public UserName(string value)
+        public Username(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw new EmptyUserNameException();
+                throw new EmptyUsernameException();
             }
             Value = value;
         }
-        public static implicit operator UserName(string value)
+        public static implicit operator Username(string value)
             =>new(value);
-        public static implicit operator string(UserName userName)
+        public static implicit operator string(Username userName)
             =>userName.Value;
     }
 }

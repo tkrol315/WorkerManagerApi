@@ -5,10 +5,8 @@ namespace WorkerManager.Domain.Factories
 {
     public class UserFactory : IUserFactory
     {
-        public User CreateWorker(UserId id, UserName name, PasswordHash passwordHash, uint roleId)
-            => new(id, name, passwordHash, roleId);
+        public User Create(UserId id, Username username, PasswordHash passwordHash, RoleId roleId)
+                => new(id, username, passwordHash, roleId);
 
-        public User CreateManager(UserId id, UserName name, PasswordHash passwordHash, uint roleId, TaskListId taskListId)
-            => new(id, name, passwordHash, roleId, taskListId);
     }
 }

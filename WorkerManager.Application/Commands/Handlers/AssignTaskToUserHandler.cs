@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System.ComponentModel;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Services;
 using WorkerManager.Domain.Repositories;

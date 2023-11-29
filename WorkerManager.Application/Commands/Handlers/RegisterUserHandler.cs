@@ -1,7 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Identity;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Services;
+using WorkerManager.Domain.Entities;
 using WorkerManager.Domain.Factories;
 using WorkerManager.Domain.Repositories;
 
@@ -11,10 +12,10 @@ namespace WorkerManager.Application.Commands.Handlers
     {
         private readonly IUserFactory _factory;
         private readonly IUserReadService _readService;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IUserRepository _repository;
 
-        public RegisterUserHandler(IUserFactory factory, IUserReadService readService, IPasswordHasher passwordHasher, IUserRepository repository)
+        public RegisterUserHandler(IUserFactory factory, IUserReadService readService, IPasswordHasher<User> passwordHasher, IUserRepository repository)
         {
             _factory = factory;
             _readService = readService;
@@ -33,7 +34,7 @@ namespace WorkerManager.Application.Commands.Handlers
                 throw new PasswordsDontMatchException();
             }
             var createdUser = _factory.Create(command.Id, command.UserName, "NotHashedYet", command.RoleId);
-            createdUser.PasswordHash = _passwordHasher.HashPassword(command.Password);
+            createdUser.PasswordHash = _passwordHasher.HashPassword(createdUser,command.Password);
             await _repository.AddAsync(createdUser);
             return Unit.Value;
         }

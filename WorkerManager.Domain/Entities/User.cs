@@ -6,16 +6,16 @@ namespace WorkerManager.Domain.Entities
     public class User
     {
         public UserId Id { get; private set; }
-        public UserName UserName { get; private set; }
+        public Username Username { get; private set; }
         public PasswordHash PasswordHash { get; set; }
         public TaskList? TaskList { get; private set; }
         public uint RoleId { get; private set; }
         public Task? AssignedTask { get; private set; }
 
-        internal User(UserId id, UserName userName, PasswordHash passwordHash, uint roleId)
+        internal User(UserId id, Username username, PasswordHash passwordHash, uint roleId)
         {
             Id = id;
-            UserName = userName;
+            Username = username;
             RoleId = roleId;
             if(RoleId == 1)
             {

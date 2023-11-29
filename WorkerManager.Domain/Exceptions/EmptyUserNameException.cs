@@ -2,9 +2,9 @@
 
 namespace WorkerManager.Domain.Exceptions
 {
-    public class EmptyUserNameException : WorkerManagerException
+    public class EmptyUsernameException : WorkerManagerException
     {
-        public EmptyUserNameException() : base("User name cannot be empty.")
+        public EmptyUsernameException() : base("User name cannot be empty.")
         {
         }
     }

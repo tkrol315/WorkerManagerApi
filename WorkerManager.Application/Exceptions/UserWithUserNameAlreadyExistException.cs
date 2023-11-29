@@ -4,7 +4,7 @@ namespace WorkerManager.Application.Exceptions
 {
     public class UserWithUserNameAlreadyExistException : WorkerManagerException
     {
-        public UserWithUserNameAlreadyExistException(string userName) : base($"User with user name '{userName}' already exists. ")
+        public UserWithUserNameAlreadyExistException(string userName) : base($"User with username '{userName}' already exists. ")
         {
         }
     }
