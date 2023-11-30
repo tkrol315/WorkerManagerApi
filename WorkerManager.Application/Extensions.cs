@@ -12,7 +12,7 @@ namespace WorkerManager.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<ITaskListFactory, TaskListFactory>();
+         
             services.AddSingleton<ITaskFactory, Domain.Factories.TaskFactory>();
             services.AddSingleton<IUserFactory, UserFactory>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

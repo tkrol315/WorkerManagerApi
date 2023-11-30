@@ -1,20 +1,21 @@
 ﻿using MediatR;
 using WorkerManager.Application.Services;
+using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {
     public class GetTaskByNameAndManagerIdHandler : IRequestHandler<GetTaskByNameAndManagerId, Domain.Entities.Task>
     {
-        private readonly IUserReadService _readService;
+        private readonly IUserRepository _repository;
 
-        public GetTaskByNameAndManagerIdHandler(IUserReadService readService)
+        public GetTaskByNameAndManagerIdHandler(IUserRepository repository)
         {
-            _readService = readService;
+            _repository = repository;
         }
 
         public async Task<Domain.Entities.Task> Handle(GetTaskByNameAndManagerId query, CancellationToken cancellationToken)
         {
-            var manager = await _readService.GetManagerWithTaskList(query.ManagerId);
+            var manager = await _repository.GetAsync(query.ManagerId);
             var task = manager.TaskList.GetTask(query.TaskName);
             return task;
         }

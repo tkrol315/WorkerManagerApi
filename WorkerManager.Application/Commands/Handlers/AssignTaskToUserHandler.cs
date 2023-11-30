@@ -7,23 +7,21 @@ namespace WorkerManager.Application.Commands.Handlers
 {
     public class AssignTaskToUserHandler : IRequestHandler<AssignTaskToUser, Unit>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserReadService _readService;
+        private readonly IUserRepository _repository;
 
-        public AssignTaskToUserHandler(IUserRepository userRepository, IUserReadService readService)
+        public AssignTaskToUserHandler(IUserRepository repository)
         {
-            _userRepository = userRepository;
-            _readService = readService;
+            _repository = repository;
         }
 
         public async Task<Unit> Handle(AssignTaskToUser command, CancellationToken cancellationToken)
         {
-            var worker = await _readService.GetWorkerWithAssignedTask(command.UserId);
+            var worker = await _repository.GetAsync(command.UserId);
             if (worker is null)
             {
                 throw new UserNotFoundException(command.UserId);
             }
-            var creator = await _readService.GetManagerWithTaskList(command.TaskCreatorId);
+            var creator = await _repository.GetAsync(command.TaskCreatorId);
             var task = creator.TaskList.GetTask(command.TaskName);
             if (task.AssignedToUserId is not null)
             {
@@ -35,8 +33,8 @@ namespace WorkerManager.Application.Commands.Handlers
             }
             task.SetAssignedUser(worker.Id);
             worker.SetAssignedTask(task);
-            await _userRepository.UpdateAsync(worker);
-            await _userRepository.UpdateAsync(creator);
+            await _repository.UpdateAsync(worker);
+            await _repository.UpdateAsync(creator);
             return Unit.Value;
         }
     }

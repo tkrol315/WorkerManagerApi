@@ -6,24 +6,24 @@ namespace WorkerManager.Application.Commands.Handlers
 {
     public class MarkTaskAsCompletedHandler : IRequestHandler<MarkTaskAsCompleted, Unit>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserReadService _readService;
+        private readonly IUserRepository _repository;
+       
 
-        public MarkTaskAsCompletedHandler(IUserRepository userRepository, IUserReadService readService)
+        public MarkTaskAsCompletedHandler(IUserRepository repository)
         {
-            _userRepository = userRepository;
-            _readService = readService;
+            _repository = repository;
+           
         }
 
         public async Task<Unit> Handle(MarkTaskAsCompleted command, CancellationToken cancellationToken)
         {
-            var worker = await _readService.GetWorkerWithAssignedTask(command.WorkerId);
-            var creator = await _readService.GetManagerWithTaskList(command.CreatorId);
+            var worker = await _repository.GetAsync(command.WorkerId);
+            var creator = await _repository.GetAsync(command.CreatorId);
             var task = creator.TaskList.GetTask(command.TaskName);
             task.SetTaskAsCompleted();
             worker.ClearAssignedTask();
-            await _userRepository.UpdateAsync(worker);
-            await _userRepository.UpdateAsync(creator);
+            await _repository.UpdateAsync(worker);
+            await _repository.UpdateAsync(creator);
             return Unit.Value;
         }
     }

@@ -8,15 +8,14 @@ namespace WorkerManager.Application.Commands.Handlers
     public class RemoveTaskHandler : IRequestHandler<RemoveTask, Unit>
     {
         private readonly IUserRepository _repository;
-        private readonly IUserReadService _readService;
-        public RemoveTaskHandler(IUserReadService readService, IUserRepository repository)
+        public RemoveTaskHandler(IUserRepository repository)
         {
-            _readService = readService;
+           
             _repository = repository;
         }
         public async Task<Unit> Handle(RemoveTask command, CancellationToken cancellationToken)
         {
-            var creator = await _readService.GetManagerWithTaskList(command.ManagerId);
+            var creator = await _repository.GetAsync(command.ManagerId);
             creator.TaskList.RemoveTask(command.TaskName);
             await _repository.UpdateAsync(creator);
             return Unit.Value;

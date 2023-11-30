@@ -1,21 +1,22 @@
 ﻿using MediatR;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Services;
+using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {
     public class GetTasksByManagerIdHandler : IRequestHandler<GetTasksByManagerId, IEnumerable<Domain.Entities.Task>>
     {
-        private readonly IUserReadService _readService;
+        private readonly IUserRepository _repository;
 
-        public GetTasksByManagerIdHandler(IUserReadService readService)
+        public GetTasksByManagerIdHandler(IUserRepository repository)
         {
-            _readService = readService;
+            _repository = repository;
         }
 
         public async Task<IEnumerable<Domain.Entities.Task>> Handle(GetTasksByManagerId query, CancellationToken cancellationToken)
         {
-            var manager = await _readService.GetManagerWithTaskList(query.ManagerId);
+            var manager = await _repository.GetAsync(query.ManagerId);
             if (manager is null)
             {
                 throw new UserNotFoundException(query.ManagerId);
