@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using WorkerManager.Application.Dto;
 
 namespace WorkerManager.Application.Commands
 {

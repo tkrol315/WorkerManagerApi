@@ -1,35 +1,31 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Application.Services;
-using WorkerManager.Domain.Factories;
 using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
     public class CreateTaskHandler : IRequestHandler<CreateTask, Unit>
     {
-        private readonly ITaskFactory _factory;
-        private readonly IUserRepository _repository;
-      
+        private readonly IManagerRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CreateTaskHandler(ITaskFactory factory, IUserRepository repository)
+        public CreateTaskHandler(IManagerRepository repository, IMapper mapper)
         {
-            _factory = factory;
             _repository = repository;
-          
+            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(CreateTask command, CancellationToken cancellationToken)
         {
-            var ( id, name, description, creatorId ) = command;
-            var creator = await _repository.GetAsync(creatorId);
-            if (creator is null)
-            {
-                throw new UserNotFoundException(creatorId);
-            }
-            var newTask = _factory.Create(id, name, description, creator);
-            creator.TaskList.AddTask(newTask);
-            await _repository.UpdateAsync(creator);
+            var manager = await _repository.GetAsync(command.Id)
+                ?? throw new UserNotFoundException(command.Id);
+
+            var newTask = _mapper.Map<Domain.Entities.Task>(command.Dto);
+            newTask.Creator = manager;
+            newTask.TaskStatus = Domain.Enums.TaskStatus.NotAssigned;
+            manager.Tasks.Add(newTask);
+            await _repository.UpdateAsync(manager);
             return Unit.Value;
         }
     }

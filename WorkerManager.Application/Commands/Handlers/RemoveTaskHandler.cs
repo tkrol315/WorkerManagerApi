@@ -1,23 +1,27 @@
 ﻿using MediatR;
-using System.Runtime.InteropServices;
-using WorkerManager.Application.Services;
+using WorkerManager.Application.Exceptions;
 using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
     public class RemoveTaskHandler : IRequestHandler<RemoveTask, Unit>
     {
-        private readonly IUserRepository _repository;
-        public RemoveTaskHandler(IUserRepository repository)
+        private readonly IManagerRepository _repository;
+        public RemoveTaskHandler(IManagerRepository repository)
         {
            
             _repository = repository;
         }
         public async Task<Unit> Handle(RemoveTask command, CancellationToken cancellationToken)
         {
-            var creator = await _repository.GetAsync(command.ManagerId);
-            creator.TaskList.RemoveTask(command.TaskName);
-            await _repository.UpdateAsync(creator);
+            var manager = await _repository.GetAsync(command.ManagerId)
+                ?? throw new UserNotFoundException(command.ManagerId);
+
+            var task = manager.Tasks.FirstOrDefault(t => t.Name == command.TaskName)
+                ?? throw new TaskNotFoundException(command.TaskName);
+
+            manager.Tasks.Remove(task);
+            await _repository.UpdateAsync(manager);
             return Unit.Value;
         }
     }

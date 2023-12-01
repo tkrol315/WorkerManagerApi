@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using WorkerManager.Domain.Entities;
+using WorkerManager.Application.Dto;
 
 namespace WorkerManager.Application.Commands
 {
-    public record CreateTask(Guid Id, string Name, string Description, Guid CreatorId) : IRequest<Unit>;
+    public record CreateTask(Guid Id, CreateTaskDto Dto) : IRequest<Unit>;
 }

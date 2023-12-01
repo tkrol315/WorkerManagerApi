@@ -3,5 +3,6 @@ using WorkerManager.Application.Dto;
 
 namespace WorkerManager.Application.Commands
 {
-    public record RegisterUser(RegisterUserDto Dto) : IRequest<Unit>;
+    public record AssignTask(Guid ManagerId, Guid WorkerId, string TaskName) : IRequest<Unit>;
+    
 }

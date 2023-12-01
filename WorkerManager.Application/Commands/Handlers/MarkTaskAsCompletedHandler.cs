@@ -1,15 +1,16 @@
 ﻿using MediatR;
-using WorkerManager.Application.Services;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using WorkerManager.Application.Exceptions;
 using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
     public class MarkTaskAsCompletedHandler : IRequestHandler<MarkTaskAsCompleted, Unit>
     {
-        private readonly IUserRepository _repository;
+        private readonly IWorkerRepository _repository;
        
 
-        public MarkTaskAsCompletedHandler(IUserRepository repository)
+        public MarkTaskAsCompletedHandler(IWorkerRepository repository)
         {
             _repository = repository;
            
@@ -17,13 +18,13 @@ namespace WorkerManager.Application.Commands.Handlers
 
         public async Task<Unit> Handle(MarkTaskAsCompleted command, CancellationToken cancellationToken)
         {
-            var worker = await _repository.GetAsync(command.WorkerId);
-            var creator = await _repository.GetAsync(command.CreatorId);
-            var task = creator.TaskList.GetTask(command.TaskName);
-            task.SetTaskAsCompleted();
-            worker.ClearAssignedTask();
+            var worker = await _repository.GetAsync(command.WorkerId)
+                ?? throw new UserNotFoundException(command.WorkerId);
+            if(worker.AssignedTask is null)
+                throw new AssignedTaskNotFoundException();
+            worker.AssignedTask.TaskStatus = Domain.Enums.TaskStatus.Finished;
             await _repository.UpdateAsync(worker);
-            await _repository.UpdateAsync(creator);
+
             return Unit.Value;
         }
     }

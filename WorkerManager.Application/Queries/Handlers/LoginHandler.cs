@@ -6,30 +6,28 @@ using System.Security.Claims;
 using System.Text;
 using WorkerManager.Application.Authentication;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Application.Services;
 using WorkerManager.Domain.Entities;
+using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {
     public class LoginHandler : IRequestHandler<Login, string>
     {
+        private readonly IUserRepository _repository;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IUserReadService _readService;
         private readonly AuthenticationSettings _authenticationSettings;
 
-        public LoginHandler(IPasswordHasher<User> passwordHasher, IUserReadService readService)
+        public LoginHandler(IPasswordHasher<User> passwordHasher, IUserRepository repository)
         {
             _passwordHasher = passwordHasher;
-            _readService = readService;
+            _repository = repository;
         }
 
         public async Task<string> Handle(Login query, CancellationToken cancellationToken)
         {
-            var user = await _readService.getUserByUserName(query.Username);
-            if (user is null)
-            {
-                throw new InvalidUsernameOrPasswordException();
-            }
+            var user = await _repository.GetByUserNameAsync(query.Username)
+                ?? throw new InvalidUsernameOrPasswordException();
+
             var passwordValidationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, query.Password);
             if (passwordValidationResult is PasswordVerificationResult.Failed)
             {
