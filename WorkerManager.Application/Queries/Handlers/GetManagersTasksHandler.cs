@@ -2,7 +2,7 @@
 using MediatR;
 using WorkerManager.Application.Dto;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Domain.Repositories;
+using WorkerManager.Application.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {

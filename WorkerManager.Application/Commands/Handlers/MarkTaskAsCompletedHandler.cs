@@ -1,7 +1,6 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Domain.Repositories;
+using WorkerManager.Application.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {

@@ -1,31 +1,29 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using WorkerManager.Application.Authentication;
+using WorkerManager.Application.Dto;
 using WorkerManager.Application.Exceptions;
+using WorkerManager.Application.Repositories;
+using WorkerManager.Application.Services;
 using WorkerManager.Domain.Entities;
-using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {
-    public class LoginHandler : IRequestHandler<Login, string>
+    public class LoginHandler : IRequestHandler<Login, JwtTokenDto>
     {
         private readonly IUserRepository _repository;
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly AuthenticationSettings _authenticationSettings;
+        private readonly IJwtService _jwtService;
 
-        public LoginHandler(IPasswordHasher<User> passwordHasher, IUserRepository repository)
+        public LoginHandler(IUserRepository repository, IPasswordHasher<User> passwordHasher, IJwtService jwtService)
         {
-            _passwordHasher = passwordHasher;
             _repository = repository;
+            _passwordHasher = passwordHasher;
+            _jwtService = jwtService;
         }
 
-        public async Task<string> Handle(Login query, CancellationToken cancellationToken)
+        public async Task<JwtTokenDto> Handle(Login query, CancellationToken cancellationToken)
         {
-            var user = await _repository.GetByUserNameAsync(query.Username)
+            var user = await _repository.GetUserByNameAsync(query.Username)
                 ?? throw new InvalidUsernameOrPasswordException();
 
             var passwordValidationResult = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, query.Password);
@@ -33,25 +31,11 @@ namespace WorkerManager.Application.Queries.Handlers
             {
                 throw new InvalidUsernameOrPasswordException();
             }
-            var claims = new List<Claim>()
+            var token = _jwtService.GetJwtToken(user);
+            return new JwtTokenDto()
             {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.Username),
-                new(ClaimTypes.Role, user.RoleId.ToString())
+                Token = token
             };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
-
-            var token = new JwtSecurityToken(
-                _authenticationSettings.JwtIssuer,
-                _authenticationSettings.JwtIssuer,
-                claims,
-                expires: expires,
-                signingCredentials: cred);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
         }
     }
 }

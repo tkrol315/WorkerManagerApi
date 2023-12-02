@@ -1,10 +1,10 @@
 ﻿using WorkerManager.Domain.Entities;
 
-namespace WorkerManager.Domain.Repositories
+namespace WorkerManager.Application.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetByUserNameAsync(string username);
+        Task<User?> GetUserByNameAsync(string username);
         Task<bool> AlreadyExistsByUserNameAsync(string username);
         System.Threading.Tasks.Task AddAsync(User user);
     }

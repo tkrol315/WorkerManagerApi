@@ -1,7 +1,4 @@
-﻿using WorkerManager.Domain.Enums;
-using WorkerManager.Domain.ValueObjects;
-
-namespace WorkerManager.Domain.Entities
+﻿namespace WorkerManager.Domain.Entities
 {
     public class Worker : User
     {

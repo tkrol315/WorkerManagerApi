@@ -1,5 +1,6 @@
-﻿using WorkerManager.Domain.Entities;
-using WorkerManager.Domain.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using WorkerManager.Application.Repositories;
+using WorkerManager.Domain.Entities;
 using WorkerManager.Infrastructure.EF.Contexts;
 
 namespace WorkerManager.Infrastructure.EF.Repositories
@@ -13,19 +14,17 @@ namespace WorkerManager.Infrastructure.EF.Repositories
             _context = context;
         }
 
-        public System.Threading.Tasks.Task AddAsync(User user)
+        public async System.Threading.Tasks.Task AddAsync(User user)
         {
-            throw new NotImplementedException();
+           await _context.Users.AddAsync(user);
+           await _context.SaveChangesAsync();
         }
 
-        public Task<bool> AlreadyExistsByUserNameAsync(string username)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<bool> AlreadyExistsByUserNameAsync(string username)
+            => await _context.Users.AnyAsync(u => u.Username == username);
+        
 
-        public Task<User> GetByUserNameAsync(string username)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<User?> GetUserByNameAsync(string username)
+            => await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using WorkerManager.Domain.Entities;
 
-namespace WorkerManager.Domain.Repositories
+namespace WorkerManager.Application.Repositories
 {
     public interface IManagerRepository
     {

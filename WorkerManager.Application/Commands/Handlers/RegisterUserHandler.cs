@@ -2,8 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using WorkerManager.Application.Exceptions;
+using WorkerManager.Application.Repositories;
 using WorkerManager.Domain.Entities;
-using WorkerManager.Domain.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {

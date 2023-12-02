@@ -4,9 +4,9 @@ using WorkerManager.Domain.Entities;
 
 namespace WorkerManager.Application.Profiles
 {
-    public class MappingProfile : Profile
+    public class UserMappingProfile : Profile
     {
-        public MappingProfile()
+        public UserMappingProfile()
         {
             CreateMap<User, GetUserDto>();
 
@@ -15,10 +15,6 @@ namespace WorkerManager.Application.Profiles
 
             CreateMap<Worker, GetWorkerDto>()
             .IncludeBase<User, GetUserDto>();
-
-            CreateMap<Domain.Entities.Task, GetTaskDto>();
-
-            CreateMap<CreateTaskDto, Domain.Entities.Task>();
 
             CreateMap<RegisterUserDto, User>();
         }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Domain.Repositories;
+using WorkerManager.Application.Repositories;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
