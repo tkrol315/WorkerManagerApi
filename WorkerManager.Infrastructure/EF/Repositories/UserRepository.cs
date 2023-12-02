@@ -7,9 +7,9 @@ namespace WorkerManager.Infrastructure.EF.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly WorkManagerDbContext _context;
+        private readonly WorkerManagerDbContext _context;
 
-        public UserRepository(WorkManagerDbContext context)
+        public UserRepository(WorkerManagerDbContext context)
         {
             _context = context;
         }
@@ -21,10 +21,12 @@ namespace WorkerManager.Infrastructure.EF.Repositories
         }
 
         public async Task<bool> AlreadyExistsByUserNameAsync(string username)
-            => await _context.Users.AnyAsync(u => u.Username == username);
+            => await _context.Users
+            .AnyAsync(u => u.Username == username);
         
 
         public async Task<User?> GetUserByNameAsync(string username)
-            => await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            => await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 }

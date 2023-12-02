@@ -13,10 +13,11 @@ namespace WorkerManager.Application.Commands.Handlers
         private readonly IUserRepository _repository;
         private readonly IMapper _mapper;
 
-        public RegisterUserHandler(IPasswordHasher<User> passwordHasher, IUserRepository repository)
-        {        
+        public RegisterUserHandler(IPasswordHasher<User> passwordHasher, IUserRepository repository, IMapper mapper)
+        {
             _passwordHasher = passwordHasher;
             _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<Unit> Handle(RegisterUser command, CancellationToken cancellationToken)

@@ -5,10 +5,10 @@
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public Guid? UserId { get; set; }
-        public User? User { get; set; }
-        public Guid CreatorId { get; set; }
-        public User Creator { get; set; }
+        public Guid? WorkerId { get; set; }
+        public Worker? Worker { get; set; }
+        public Guid ManagerId { get; set; }
+        public Manager Manager { get; set; }
       
     }
 }

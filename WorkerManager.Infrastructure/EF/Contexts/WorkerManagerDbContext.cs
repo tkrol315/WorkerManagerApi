@@ -3,12 +3,12 @@ using WorkerManager.Domain.Entities;
 
 namespace WorkerManager.Infrastructure.EF.Contexts
 {
-    public class WorkManagerDbContext : DbContext
+    public class WorkerManagerDbContext : DbContext
     {
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
-        public WorkManagerDbContext(DbContextOptions<WorkManagerDbContext> options) : base(options)
+        public WorkerManagerDbContext(DbContextOptions<WorkerManagerDbContext> options) : base(options)
         {
             
         }

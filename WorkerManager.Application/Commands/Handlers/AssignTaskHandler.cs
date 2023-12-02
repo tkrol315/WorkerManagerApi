@@ -9,6 +9,12 @@ namespace WorkerManager.Application.Commands.Handlers
         private readonly IManagerRepository _managerRepository;
         private readonly IWorkerRepository _workerRepository;
 
+        public AssignTaskHandler(IManagerRepository managerRepository, IWorkerRepository workerRepository)
+        {
+            _managerRepository = managerRepository;
+            _workerRepository = workerRepository;
+        }
+
         public async Task<Unit> Handle(AssignTask command, CancellationToken cancellationToken)
         {
             var manager = await _managerRepository.GetAsync(command.ManagerId) 

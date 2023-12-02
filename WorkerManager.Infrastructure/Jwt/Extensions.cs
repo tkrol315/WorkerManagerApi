@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WorkerManager.Application.Services;
+using WorkerManager.Infrastructure.Services;
 using WorkerManager.Shared.options;
 
 namespace WorkerManager.Application.Authentication

@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using WorkerManager.Shared.Services;
 
 namespace WorkerManager.Shared
 {
@@ -8,7 +7,7 @@ namespace WorkerManager.Shared
     {
         public static IServiceCollection AddShared(this IServiceCollection services)
         {
-           services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            services.AddHostedService<AppInitializer>();
             return services;
         }
     }

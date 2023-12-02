@@ -8,11 +8,12 @@ namespace WorkerManager.Application
 {
     public static class Extensions
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplication(this IServiceCollection services)
         {
          
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             return services;
         }
     }
