@@ -12,7 +12,7 @@ using WorkerManager.Infrastructure.EF.Contexts;
 namespace WorkerManager.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(WorkerManagerDbContext))]
-    [Migration("20231202121559_Init")]
+    [Migration("20231202221044_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -48,15 +48,12 @@ namespace WorkerManager.Infrastructure.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AssignedToUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -65,9 +62,15 @@ namespace WorkerManager.Infrastructure.EF.Migrations
                     b.Property<int>("TaskStatus")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("WorkerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("WorkerId")
+                        .IsUnique();
 
                     b.ToTable("Tasks");
                 });
@@ -96,83 +99,9 @@ namespace WorkerManager.Infrastructure.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Role", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Role");
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Task", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ManagerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("WorkerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
-
-                    b.HasIndex("WorkerId")
-                        .IsUnique();
-
-                    b.ToTable("Task");
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.User", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId");
-
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
@@ -186,16 +115,9 @@ namespace WorkerManager.Infrastructure.EF.Migrations
                     b.HasDiscriminator().HasValue("Manager");
                 });
 
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Manager", b =>
+            modelBuilder.Entity("WorkerManager.Domain.Entities.Worker", b =>
                 {
-                    b.HasBaseType("WorkerManager.Infrastructure.EF.Models.User");
-
-                    b.HasDiscriminator().HasValue("Manager");
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Worker", b =>
-                {
-                    b.HasBaseType("WorkerManager.Infrastructure.EF.Models.User");
+                    b.HasBaseType("WorkerManager.Domain.Entities.User");
 
                     b.Property<Guid?>("AssignedTaskId")
                         .HasColumnType("uuid");
@@ -205,36 +127,25 @@ namespace WorkerManager.Infrastructure.EF.Migrations
 
             modelBuilder.Entity("WorkerManager.Domain.Entities.Task", b =>
                 {
-                    b.HasOne("WorkerManager.Domain.Entities.Manager", "Creator")
-                        .WithMany("Tasks")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Task", b =>
-                {
-                    b.HasOne("WorkerManager.Infrastructure.EF.Models.Manager", "Manager")
+                    b.HasOne("WorkerManager.Domain.Entities.Manager", "Manager")
                         .WithMany("Tasks")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkerManager.Infrastructure.EF.Models.Worker", "Worker")
+                    b.HasOne("WorkerManager.Domain.Entities.Worker", "Worker")
                         .WithOne("AssignedTask")
-                        .HasForeignKey("WorkerManager.Infrastructure.EF.Models.Task", "WorkerId");
+                        .HasForeignKey("WorkerManager.Domain.Entities.Task", "WorkerId");
 
                     b.Navigation("Manager");
 
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.User", b =>
+            modelBuilder.Entity("WorkerManager.Domain.Entities.User", b =>
                 {
-                    b.HasOne("WorkerManager.Infrastructure.EF.Models.Role", "Role")
-                        .WithMany("Users")
+                    b.HasOne("WorkerManager.Domain.Entities.Role", "Role")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -242,22 +153,12 @@ namespace WorkerManager.Infrastructure.EF.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Role", b =>
-                {
-                    b.Navigation("Users");
-                });
-
             modelBuilder.Entity("WorkerManager.Domain.Entities.Manager", b =>
                 {
                     b.Navigation("Tasks");
                 });
 
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Manager", b =>
-                {
-                    b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("WorkerManager.Infrastructure.EF.Models.Worker", b =>
+            modelBuilder.Entity("WorkerManager.Domain.Entities.Worker", b =>
                 {
                     b.Navigation("AssignedTask");
                 });

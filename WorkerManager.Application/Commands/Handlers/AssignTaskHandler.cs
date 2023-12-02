@@ -23,11 +23,11 @@ namespace WorkerManager.Application.Commands.Handlers
                 ?? throw new UserNotFoundException(command.WorkerId);
             var task = manager.Tasks.FirstOrDefault(t => t.Name == command.TaskName)
                 ?? throw new TaskNotFoundException(command.TaskName);
-            if(task.AssignedToUserId is not null) 
-                throw new TaskAlreadyAssignedException(task.AssignedToUserId);
+            if(task.WorkerId is not null) 
+                throw new TaskAlreadyAssignedException(task.WorkerId);
 
             task.TaskStatus = Domain.Enums.TaskStatus.InProgress;
-            task.AssignedToUserId = command.WorkerId;
+            task.WorkerId = command.WorkerId;
 
             await _managerRepository.UpdateAsync(manager);
 

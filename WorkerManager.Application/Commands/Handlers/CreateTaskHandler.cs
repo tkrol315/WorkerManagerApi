@@ -22,7 +22,7 @@ namespace WorkerManager.Application.Commands.Handlers
                 ?? throw new UserNotFoundException(command.Id);
 
             var newTask = _mapper.Map<Domain.Entities.Task>(command.Dto);
-            newTask.Creator = manager;
+            newTask.Manager = manager;
             newTask.TaskStatus = Domain.Enums.TaskStatus.NotAssigned;
             manager.Tasks.Add(newTask);
             await _repository.UpdateAsync(manager);

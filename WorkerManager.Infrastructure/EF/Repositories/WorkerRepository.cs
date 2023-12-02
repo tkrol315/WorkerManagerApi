@@ -20,8 +20,6 @@ namespace WorkerManager.Infrastructure.EF.Repositories
             .Include(u => u.AssignedTask)
             .FirstOrDefaultAsync(u => u.Id == id && u.RoleId == 0);
 
-
-
         public async System.Threading.Tasks.Task UpdateAsync(Worker worker)
         {
             _context.Users.Update(worker);

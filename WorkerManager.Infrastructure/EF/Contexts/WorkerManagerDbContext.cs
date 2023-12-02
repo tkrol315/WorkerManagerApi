@@ -8,12 +8,15 @@ namespace WorkerManager.Infrastructure.EF.Contexts
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
+       
+
         public WorkerManagerDbContext(DbContextOptions<WorkerManagerDbContext> options) : base(options)
         {
             
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+           
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
     }
