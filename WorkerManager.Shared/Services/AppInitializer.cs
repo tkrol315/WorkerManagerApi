@@ -25,6 +25,7 @@ namespace WorkerManager.Shared.Services
                 if (dbContext is null) continue;
                 await dbContext.Database.MigrateAsync(cancellationToken);
             }
+            
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

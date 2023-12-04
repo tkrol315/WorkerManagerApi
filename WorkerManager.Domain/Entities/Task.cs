@@ -10,6 +10,7 @@
         public Guid ManagerId { get; set; } 
         public Worker? Worker {  get;   set; }
         public Guid? WorkerId { get; set; }
+        public Guid? CompletedByWorkerWithId { get; set; }
         public Enums.TaskStatus TaskStatus { get;  set; } = Enums.TaskStatus.NotAssigned;
 
       

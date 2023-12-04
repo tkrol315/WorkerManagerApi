@@ -1,5 +1,6 @@
 using WorkerManager.Application;
 using WorkerManager.Infrastructure;
+using WorkerManager.Infrastructure.EF.Seeder;
 using WorkerManager.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();
+await seeder.Seed();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

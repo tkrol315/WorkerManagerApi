@@ -10,19 +10,20 @@ namespace WorkerManager.Application.Commands.Handlers
     public class RegisterUserHandler : IRequestHandler<RegisterUser, Unit>
     {
         private readonly IPasswordHasher<User> _passwordHasher;
-        private readonly IUserRepository _repository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public RegisterUserHandler(IPasswordHasher<User> passwordHasher, IUserRepository repository, IMapper mapper)
+        public RegisterUserHandler(IPasswordHasher<User> passwordHasher,
+            IMapper mapper, IUserRepository userRepository)
         {
             _passwordHasher = passwordHasher;
-            _repository = repository;
             _mapper = mapper;
+            _userRepository = userRepository;
         }
 
         public async Task<Unit> Handle(RegisterUser command, CancellationToken cancellationToken)
         {
-            if (await _repository.AlreadyExistsByUserNameAsync(command.Dto.Username))
+            if (await _userRepository.AlreadyExistsByUserNameAsync(command.Dto.Username))
             {
                 throw new UserWithUserNameAlreadyExistException(command.Dto.Username);
             }
@@ -30,9 +31,22 @@ namespace WorkerManager.Application.Commands.Handlers
             {
                 throw new PasswordsDontMatchException();
             }
-            var createdUser = _mapper.Map<User>(command.Dto);
-            createdUser.PasswordHash = _passwordHasher.HashPassword(createdUser,command.Dto.Password);
-            await _repository.AddAsync(createdUser);
+
+            User createdUser;
+            if(command.Dto.RoleId == 1)
+            {
+                createdUser = _mapper.Map<Worker>(command.Dto);
+            }
+            else if(command.Dto.RoleId == 2)
+            {
+                createdUser = _mapper.Map<Manager>(command.Dto);
+            }
+            else
+            {
+                throw new RoleIdOutOfRangeException();
+            }
+            createdUser.PasswordHash = _passwordHasher.HashPassword(createdUser, command.Dto.Password);
+            await _userRepository.AddAsync(createdUser);
             return Unit.Value;
         }
     }

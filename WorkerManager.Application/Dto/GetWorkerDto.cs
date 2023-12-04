@@ -1,7 +1,10 @@
-﻿namespace WorkerManager.Application.Dto
+﻿using System.Text.Json.Serialization;
+
+namespace WorkerManager.Application.Dto
 {
     public class GetWorkerDto : GetUserDto
     {
-        public Task? AssignedTask { get; set; }
+        [JsonPropertyOrder(1)]
+        public GetTaskWorkerDto? AssignedTask { get; set; }
     }
 }

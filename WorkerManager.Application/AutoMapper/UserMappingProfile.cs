@@ -16,7 +16,9 @@ namespace WorkerManager.Application.Profiles
             CreateMap<Worker, GetWorkerDto>()
             .IncludeBase<User, GetUserDto>();
 
-            CreateMap<RegisterUserDto, User>();
+            CreateMap<RegisterUserDto, Manager>();
+            CreateMap<RegisterUserDto, Worker>();
+
         }
     }
 }

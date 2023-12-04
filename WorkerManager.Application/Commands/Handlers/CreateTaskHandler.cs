@@ -20,8 +20,15 @@ namespace WorkerManager.Application.Commands.Handlers
         {
             var manager = await _repository.GetAsync(command.Id)
                 ?? throw new UserNotFoundException(command.Id);
-
-            var newTask = _mapper.Map<Domain.Entities.Task>(command.Dto);
+            if(manager.Tasks.Any(t => t.Name.ToLower() == command.taskDto.Name.ToLower()))
+            {
+                throw new TaskAlreadyExistsException(command.Id, command.taskDto.Name); 
+            }
+            var newTask = new Domain.Entities.Task()
+            {
+                Name = command.taskDto.Name,
+                Description = command.taskDto.Description,
+            };
             newTask.Manager = manager;
             newTask.TaskStatus = Domain.Enums.TaskStatus.NotAssigned;
             manager.Tasks.Add(newTask);

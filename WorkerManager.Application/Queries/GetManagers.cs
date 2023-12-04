@@ -3,6 +3,6 @@ using WorkerManager.Application.Dto;
 
 namespace WorkerManager.Application.Queries
 {
-    public record GetManagersTasks(Guid Id) : IRequest<IEnumerable<GetTaskManagerDto>>;
-   
+    public record GetManagers : IRequest<IEnumerable<GetManagerDto>>;
+    
 }

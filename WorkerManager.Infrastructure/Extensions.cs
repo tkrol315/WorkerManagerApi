@@ -7,6 +7,7 @@ using WorkerManager.Application.Services;
 using WorkerManager.Infrastructure.EF.Contexts;
 using WorkerManager.Infrastructure.EF.Options;
 using WorkerManager.Infrastructure.EF.Repositories;
+using WorkerManager.Infrastructure.EF.Seeder;
 using WorkerManager.Infrastructure.Services;
 using WorkerManager.Shared.options;
 
@@ -23,6 +24,7 @@ namespace WorkerManager.Infrastructure
             services.AddScoped<IWorkerRepository, WorkerRepository>();
             services.AddScoped<IManagerRepository, ManagerRepository>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<RoleSeeder>();
             return services;
         }
     }

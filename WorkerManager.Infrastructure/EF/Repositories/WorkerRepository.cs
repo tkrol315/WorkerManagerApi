@@ -14,15 +14,19 @@ namespace WorkerManager.Infrastructure.EF.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<Worker>> GetAllAsync()
+            => await _context.Workers
+            .Include(w => w.AssignedTask)
+            .ToListAsync();
+
         public async Task<Worker?> GetAsync(Guid id)
-            => await _context.Users
-            .OfType<Worker>()
+            => await _context.Workers
             .Include(u => u.AssignedTask)
-            .FirstOrDefaultAsync(u => u.Id == id && u.RoleId == 0);
+            .FirstOrDefaultAsync(u => u.Id == id);
 
         public async System.Threading.Tasks.Task UpdateAsync(Worker worker)
         {
-            _context.Users.Update(worker);
+            _context.Workers.Update(worker);
             await _context.SaveChangesAsync();
         }
     }

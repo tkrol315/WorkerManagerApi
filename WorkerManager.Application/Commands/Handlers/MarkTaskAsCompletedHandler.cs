@@ -22,6 +22,8 @@ namespace WorkerManager.Application.Commands.Handlers
             if(worker.AssignedTask is null)
                 throw new AssignedTaskNotFoundException();
             worker.AssignedTask.TaskStatus = Domain.Enums.TaskStatus.Finished;
+            worker.AssignedTask.CompletedByWorkerWithId = worker.Id;
+            worker.AssignedTask = null;
             await _repository.UpdateAsync(worker);
 
             return Unit.Value;

@@ -8,7 +8,9 @@ namespace WorkerManager.Infrastructure.EF.Contexts
         public DbSet<Domain.Entities.Task> Tasks { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
-       
+        public DbSet<Worker> Workers { get; set; }
+        public DbSet<Manager> Managers { get; set; }
+
 
         public WorkerManagerDbContext(DbContextOptions<WorkerManagerDbContext> options) : base(options)
         {

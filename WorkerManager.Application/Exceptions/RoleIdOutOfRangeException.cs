@@ -4,7 +4,7 @@ namespace WorkerManager.Application.Exceptions
 {
     public class RoleIdOutOfRangeException : WorkerManagerException
     {
-        public RoleIdOutOfRangeException() : base("Role Id must be in range <0,1>.")
+        public RoleIdOutOfRangeException() : base("Role Id must be in range <1,2>.")
         {
         }
     }

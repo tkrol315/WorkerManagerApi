@@ -6,7 +6,7 @@ using WorkerManager.Application.Repositories;
 
 namespace WorkerManager.Application.Queries.Handlers
 {
-    public class GetManagersTasksHandler : IRequestHandler<GetManagersTasks, IEnumerable<GetTaskDto>>
+    public class GetManagersTasksHandler : IRequestHandler<GetManagersTasks, IEnumerable<GetTaskManagerDto>>
     {
         private readonly IManagerRepository _managerRepository;
         private readonly IMapper _mapper;
@@ -17,15 +17,13 @@ namespace WorkerManager.Application.Queries.Handlers
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<GetTaskDto>> Handle(GetManagersTasks query, CancellationToken cancellationToken)
+        public async Task<IEnumerable<GetTaskManagerDto>> Handle(GetManagersTasks query, CancellationToken cancellationToken)
         {
-            var managerExists = await _managerRepository.ExistsAsync(query.Id);
-            if (!managerExists)
-            {
-                throw new UserNotFoundException(query.Id);
-            }
-            var tasks = _managerRepository.GetAsync(query.Id);
-            return _mapper.Map<List<GetTaskDto>>(tasks);
+            var manager = await _managerRepository.GetAsync(query.Id)
+                ?? throw new UserNotFoundException(query.Id);
+
+            var tasks = manager.Tasks;
+            return _mapper.Map<List<GetTaskManagerDto>>(tasks);
         }
     }
 }

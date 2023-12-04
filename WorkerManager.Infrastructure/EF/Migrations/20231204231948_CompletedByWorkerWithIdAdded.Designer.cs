@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WorkerManager.Infrastructure.EF.Contexts;
@@ -11,9 +12,11 @@ using WorkerManager.Infrastructure.EF.Contexts;
 namespace WorkerManager.Infrastructure.EF.Migrations
 {
     [DbContext(typeof(WorkerManagerDbContext))]
-    partial class WorkerManagerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204231948_CompletedByWorkerWithIdAdded")]
+    partial class CompletedByWorkerWithIdAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

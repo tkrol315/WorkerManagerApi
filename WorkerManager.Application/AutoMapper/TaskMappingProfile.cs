@@ -7,9 +7,8 @@ namespace WorkerManager.Application.Profiles
     {
         public TaskMappingProfile()
         {
-            CreateMap<Domain.Entities.Task, GetTaskDto>();
-
-            CreateMap<CreateTaskDto, Domain.Entities.Task>();
+            CreateMap<Domain.Entities.Task, GetTaskManagerDto>();
+            CreateMap<Domain.Entities.Task, GetTaskWorkerDto>();
         }
     }
 }
