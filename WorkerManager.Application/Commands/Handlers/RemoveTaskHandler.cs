@@ -17,7 +17,7 @@ namespace WorkerManager.Application.Commands.Handlers
             var manager = await _repository.GetAsync(command.ManagerId)
                 ?? throw new UserNotFoundException(command.ManagerId);
 
-            var task = manager.Tasks.FirstOrDefault(t => t.Name == command.TaskName)
+            var task = manager.Tasks.FirstOrDefault(t => t.Name.ToLower() == command.TaskName.ToLower())
                 ?? throw new TaskNotFoundException(command.TaskName);
 
             manager.Tasks.Remove(task);
