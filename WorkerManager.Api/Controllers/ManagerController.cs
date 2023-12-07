@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using WorkerManager.Application.Commands;
@@ -8,6 +9,7 @@ using WorkerManager.Application.Queries;
 namespace WorkerManager.Api.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Manager")]
     [Route("api/manager")]
     public class ManagerController : ControllerBase
     {

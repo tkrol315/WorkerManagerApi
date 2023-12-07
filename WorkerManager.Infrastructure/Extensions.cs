@@ -24,6 +24,8 @@ namespace WorkerManager.Infrastructure
             services.AddScoped<IWorkerRepository, WorkerRepository>();
             services.AddScoped<IManagerRepository, ManagerRepository>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IUserContextService, UserContextService>();
+            services.AddHttpContextAccessor();
             services.AddScoped<RoleSeeder>();
             return services;
         }

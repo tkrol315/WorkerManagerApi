@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Repositories;
+using WorkerManager.Application.Services;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
@@ -8,13 +9,15 @@ namespace WorkerManager.Application.Commands.Handlers
     {
         private readonly IManagerRepository _managerRepository;
         private readonly IWorkerRepository _workerRepository;
-      
+        private readonly IUserContextService _userContextService;
 
-        public AssignTaskHandler(IManagerRepository managerRepository, IWorkerRepository workerRepository)
+
+        public AssignTaskHandler(IManagerRepository managerRepository, IWorkerRepository workerRepository,
+            IUserContextService userContextService)
         {
             _managerRepository = managerRepository;
             _workerRepository = workerRepository;
-          
+            _userContextService = userContextService;
         }
 
         public async Task<Unit> Handle(AssignTask command, CancellationToken cancellationToken)
@@ -27,8 +30,11 @@ namespace WorkerManager.Application.Commands.Handlers
                 ?? throw new TaskNotFoundException(command.TaskName);
             if(task.WorkerId is not null) 
                 throw new TaskAlreadyAssignedException(task.WorkerId);
+            if(manager.Id != _userContextService.UserId)
+                throw new TaskAssignmentNotAllowedException();
 
-           
+
+
             task.TaskStatus = Domain.Enums.TaskStatus.InProgress;
             task.WorkerId = command.WorkerId;
             worker.AssignedTask = task;

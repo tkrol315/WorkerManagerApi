@@ -24,27 +24,22 @@ namespace WorkerManager.Application.Commands.Handlers
         public async Task<Unit> Handle(RegisterUser command, CancellationToken cancellationToken)
         {
             if (await _userRepository.AlreadyExistsByUserNameAsync(command.Dto.Username))
-            {
                 throw new UserWithUserNameAlreadyExistException(command.Dto.Username);
-            }
-            if(!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
-            {
+
+            if (!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
                 throw new PasswordsDontMatchException();
-            }
+            
 
             User createdUser;
             if(command.Dto.RoleId == 1)
-            {
                 createdUser = _mapper.Map<Worker>(command.Dto);
-            }
+            
             else if(command.Dto.RoleId == 2)
-            {
                 createdUser = _mapper.Map<Manager>(command.Dto);
-            }
+            
             else
-            {
                 throw new RoleIdOutOfRangeException();
-            }
+            
             createdUser.PasswordHash = _passwordHasher.HashPassword(createdUser, command.Dto.Password);
             await _userRepository.AddAsync(createdUser);
             return Unit.Value;

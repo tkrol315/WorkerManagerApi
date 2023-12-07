@@ -2,6 +2,7 @@
 using MediatR;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Repositories;
+using WorkerManager.Application.Services;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
@@ -9,11 +10,13 @@ namespace WorkerManager.Application.Commands.Handlers
     {
         private readonly IManagerRepository _repository;
         private readonly IMapper _mapper;
+        private readonly IUserContextService _userContextService;
 
-        public CreateTaskHandler(IManagerRepository repository, IMapper mapper)
+        public CreateTaskHandler(IManagerRepository repository, IMapper mapper, IUserContextService userContextService)
         {
             _repository = repository;
             _mapper = mapper;
+            _userContextService = userContextService;
         }
 
         public async Task<Unit> Handle(CreateTask command, CancellationToken cancellationToken)
@@ -29,6 +32,10 @@ namespace WorkerManager.Application.Commands.Handlers
                 Name = command.taskDto.Name,
                 Description = command.taskDto.Description,
             };
+            if(manager.Id != _userContextService.UserId)
+                throw new CannotCreateTaskForOtherManagerException((Guid)_userContextService.UserId, manager.Id);
+
+
             newTask.Manager = manager;
             newTask.TaskStatus = Domain.Enums.TaskStatus.NotAssigned;
             manager.Tasks.Add(newTask);

@@ -27,6 +27,7 @@ namespace WorkerManager.Infrastructure.EF.Repositories
 
         public async Task<User?> GetUserByNameAsync(string username)
             => await _context.Users
+            .Include(u => u.Role)
             .FirstOrDefaultAsync(u => u.Username == username);
     }
 }

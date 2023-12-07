@@ -23,7 +23,7 @@ namespace WorkerManager.Infrastructure.Services
             {
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.Username),
-                new(ClaimTypes.Role, user.RoleId.ToString())
+                new(ClaimTypes.Role, user.Role.Name)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
