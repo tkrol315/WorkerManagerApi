@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Options;
-using WorkerManager.Api.Authorization;
 using WorkerManager.Application;
 using WorkerManager.Infrastructure;
 using WorkerManager.Infrastructure.EF.Seeder;
