@@ -13,12 +13,12 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 {
     public class GetManagerHandlerTests
     {
-        private readonly Mock<IManagerRepository> _mockedRepository;
+        private readonly Mock<IManagerRepository> _repositoryMock;
         private readonly IMapper _mapper;
 
         public GetManagerHandlerTests()
         {
-            _mockedRepository = new Mock<IManagerRepository>();
+            _repositoryMock = new();
             var mapperCfg = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<UserMappingProfile>();
@@ -34,9 +34,9 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             var managerId = Guid.NewGuid();
             var query = new GetManager(managerId);
 
-            _mockedRepository.Setup(x => x.GetAsync(managerId)).ReturnsAsync(new Manager());
+            _repositoryMock.Setup(x => x.GetAsync(managerId)).ReturnsAsync(new Manager());
 
-            var handler = new GetManagerHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetManagerHandler(_repositoryMock.Object, _mapper);
 
 
             //act
@@ -44,7 +44,7 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 
             //Assert
             result.Should().BeOfType<GetManagerDto>();
-            _mockedRepository.Verify(x => x.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(x => x.GetAsync(managerId), Times.Once);
         }
 
         [Fact]
@@ -55,12 +55,12 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             var query = new GetManager(managerId);
 
             //act
-            var handler = new GetManagerHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetManagerHandler(_repositoryMock.Object, _mapper);
             var act = () => handler.Handle(query, CancellationToken.None);
 
             //assert
             await act.Should().ThrowAsync<UserNotFoundException>();
-            _mockedRepository.Verify(r => r.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(managerId), Times.Once);
         }
     }
 }

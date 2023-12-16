@@ -23,7 +23,7 @@ namespace WorkerManager.Application.Commands.Handlers
             var task = manager.Tasks.FirstOrDefault(t => t.Name.ToLower() == command.TaskName.ToLower())
                 ?? throw new TaskNotFoundException(command.TaskName);
 
-            if (task.ManagerId != _userContextService.UserId)
+            if (manager.Id != _userContextService.UserId)
                 throw new UserIsNotCreatorException();
             
             manager.Tasks.Remove(task);

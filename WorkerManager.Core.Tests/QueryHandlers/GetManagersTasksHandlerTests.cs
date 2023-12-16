@@ -12,11 +12,11 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 {
     public class GetManagersTasksHandlerTests
     {
-        private readonly Mock<IManagerRepository> _mockedRepository;
+        private readonly Mock<IManagerRepository> _repositoryMock;
         private readonly IMapper _mapper;
         public GetManagersTasksHandlerTests()
         {
-            _mockedRepository = new Mock<IManagerRepository>();
+            _repositoryMock = new();
             var mapperConfig = new MapperConfiguration(cfg =>  
             {
                 cfg.AddProfile<TaskMappingProfile>();
@@ -47,9 +47,9 @@ namespace WorkerManager.Core.Tests.QueryHandlers
                     }
                 }
             };
-            _mockedRepository.Setup(r => r.GetAsync(managerId)).ReturnsAsync(manager);
+            _repositoryMock.Setup(r => r.GetAsync(managerId)).ReturnsAsync(manager);
  
-            var handler = new GetManagersTasksHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetManagersTasksHandler(_repositoryMock.Object, _mapper);
             
             //act
             var result = await handler.Handle(query,CancellationToken.None);
@@ -58,7 +58,7 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             result.Should().NotBeNull();
             result.Should().BeOfType<List<GetTaskManagerDto>>();
             result.Should().HaveCount(2);
-            _mockedRepository.Verify(r => r.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(managerId), Times.Once);
         }
     }
 }

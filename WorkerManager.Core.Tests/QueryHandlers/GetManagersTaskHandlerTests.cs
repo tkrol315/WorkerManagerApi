@@ -13,11 +13,11 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 {
     public class GetManagersTaskHandlerTests
     {
-        private readonly Mock<IManagerRepository> _mockedRepository;
+        private readonly Mock<IManagerRepository> _repositoryMock;
         private readonly IMapper _mapper;
         public GetManagersTaskHandlerTests()
         {
-            _mockedRepository = new Mock<IManagerRepository>();
+            _repositoryMock = new();
             var mapperCfg = new MapperConfiguration(
                 cfg =>
                 {
@@ -42,9 +42,9 @@ namespace WorkerManager.Core.Tests.QueryHandlers
                     new(){Name =  taskName, Description = "Sample-Task"}
                 }
             };
-            _mockedRepository.Setup(r => r.GetAsync(managerId)).ReturnsAsync(manager);
+            _repositoryMock.Setup(r => r.GetAsync(managerId)).ReturnsAsync(manager);
           
-            var handler = new GetManagersTaskHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetManagersTaskHandler(_repositoryMock.Object, _mapper);
 
             //act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -52,7 +52,7 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             //assert
             result.Should().NotBeNull();
             result.Should().BeOfType<GetTaskManagerDto>();
-            _mockedRepository.Verify(r => r.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(managerId), Times.Once);
         }
 
         [Fact]
@@ -62,14 +62,14 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             var managerId = Guid.NewGuid();
             var taskName = "Sample-Task";
             var query = new GetManagersTask(managerId, taskName);
-            var handler = new GetManagersTaskHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetManagersTaskHandler(_repositoryMock.Object, _mapper);
 
             //act
             var act = () => handler.Handle(query, CancellationToken.None);
 
             //assert
             await act.Should().ThrowAsync<UserNotFoundException>();
-            _mockedRepository.Verify(r => r.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(managerId), Times.Once);
         }
 
         [Fact]
@@ -79,15 +79,15 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             var managerId = Guid.NewGuid();
             var taskName = "Sample-Task";
             var query = new GetManagersTask(managerId, taskName);
-            _mockedRepository.Setup(r => r.GetAsync(managerId)).ReturnsAsync(new Manager());
-            var handler = new GetManagersTaskHandler(_mockedRepository.Object, _mapper);
+            _repositoryMock.Setup(r => r.GetAsync(managerId)).ReturnsAsync(new Manager());
+            var handler = new GetManagersTaskHandler(_repositoryMock.Object, _mapper);
 
             //act
             var act = () => handler.Handle(query, CancellationToken.None);
 
             //assert
             await act.Should().ThrowAsync<TaskNotFoundException>();
-            _mockedRepository.Verify(r => r.GetAsync(managerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(managerId), Times.Once);
         }
     }
 

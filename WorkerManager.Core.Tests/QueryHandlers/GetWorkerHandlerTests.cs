@@ -12,12 +12,12 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 {
     public class GetWorkerHandlerTests
     {
-        private readonly Mock<IWorkerRepository> _mockedRepository;
+        private readonly Mock<IWorkerRepository> _repositoryMock;
         private readonly IMapper _mapper;
 
         public GetWorkerHandlerTests()
         {
-            _mockedRepository = new Mock<IWorkerRepository>();
+            _repositoryMock = new();
             var mapperCfg = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<UserMappingProfile>();
@@ -32,8 +32,8 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             //arrange
             var workerId = Guid.NewGuid();
             var query = new GetWorker(workerId);
-            _mockedRepository.Setup(r => r.GetAsync(workerId)).ReturnsAsync(new Domain.Entities.Worker() { Id = workerId });
-            var handler = new GetWorkerHandler(_mockedRepository.Object, _mapper);
+            _repositoryMock.Setup(r => r.GetAsync(workerId)).ReturnsAsync(new Domain.Entities.Worker() { Id = workerId });
+            var handler = new GetWorkerHandler(_repositoryMock.Object, _mapper);
 
             //act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -41,7 +41,7 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             //assert
             result.Should().NotBeNull();
             result.Should().BeOfType<GetWorkerDto>();
-            _mockedRepository.Verify(r => r.GetAsync(workerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(workerId), Times.Once);
         }
 
         [Fact]
@@ -50,14 +50,14 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             //arrange
             var workerId = Guid.NewGuid();
             var query = new GetWorker(workerId);
-            var handler = new GetWorkerHandler(_mockedRepository.Object, _mapper);
+            var handler = new GetWorkerHandler(_repositoryMock.Object, _mapper);
 
             //act
             var act = () => handler.Handle(query, CancellationToken.None);
 
             //assert
             await act.Should().ThrowAsync<UserNotFoundException>();
-            _mockedRepository.Verify(r => r.GetAsync(workerId), Times.Once);
+            _repositoryMock.Verify(r => r.GetAsync(workerId), Times.Once);
         }
     }
 }

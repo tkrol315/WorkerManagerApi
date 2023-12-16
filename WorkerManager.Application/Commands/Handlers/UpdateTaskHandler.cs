@@ -25,13 +25,9 @@ namespace WorkerManager.Application.Commands.Handlers
             var task = manager.Tasks.FirstOrDefault(t => t.Name.ToLower() == command.taskName.ToLower())
                 ?? throw new TaskNotFoundException(command.taskName);
 
-            if (task.Name.ToLower()  == command.dto.Name.ToLower() ||
-                 manager.Tasks.Any(t => t.Name.ToLower() == command.dto.Name.ToLower()))
-                throw new TaskAlreadyExistsException(command.managerId, command.dto.Name);
-            
-            if(task.ManagerId != _userContextService.UserId)
+            if (manager.Id != _userContextService.UserId)
                 throw new UserIsNotCreatorException();
-            
+
             task.Name = command.dto.Name;
             task.Description = command.dto.Description;
             await _managerRepository.UpdateAsync(manager);

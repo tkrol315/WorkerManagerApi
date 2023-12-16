@@ -9,13 +9,11 @@ namespace WorkerManager.Application.Commands.Handlers
     public class CreateTaskHandler : IRequestHandler<CreateTask, Unit>
     {
         private readonly IManagerRepository _repository;
-        private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
 
-        public CreateTaskHandler(IManagerRepository repository, IMapper mapper, IUserContextService userContextService)
+        public CreateTaskHandler(IManagerRepository repository, IUserContextService userContextService)
         {
             _repository = repository;
-            _mapper = mapper;
             _userContextService = userContextService;
         }
 

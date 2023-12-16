@@ -12,12 +12,12 @@ namespace WorkerManager.Core.Tests.QueryHandlers
 {
     public class GetWorkersHandlerTests
     {
-        private readonly Mock<IWorkerRepository> _mockedRepository;
+        private readonly Mock<IWorkerRepository> _repositoryMock;
         private readonly IMapper _mapper;
 
         public GetWorkersHandlerTests()
         {
-            _mockedRepository = new Mock<IWorkerRepository>();
+            _repositoryMock = new();
             var mapperCfg = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<UserMappingProfile>();
@@ -31,8 +31,8 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             //arrange
             var query = new GetWorkers();
             var listOfWorkers = new List<Worker>() { new(), new()};
-            _mockedRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(listOfWorkers);
-            var handler = new GetWorkersHandler(_mockedRepository.Object, _mapper);
+            _repositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(listOfWorkers);
+            var handler = new GetWorkersHandler(_repositoryMock.Object, _mapper);
             
             //act
             var result = await handler.Handle(query,CancellationToken.None);
@@ -41,7 +41,7 @@ namespace WorkerManager.Core.Tests.QueryHandlers
             result.Should().NotBeNull();
             result.Should().BeOfType<List<GetWorkerDto>>();
             result.Should().HaveCount(2);
-            _mockedRepository.Verify(r => r.GetAllAsync(), Times.Once);   
+            _repositoryMock.Verify(r => r.GetAllAsync(), Times.Once);   
         }
     }
 

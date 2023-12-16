@@ -22,15 +22,17 @@ namespace WorkerManager.Application.Commands.Handlers
 
         public async Task<Unit> Handle(AssignTask command, CancellationToken cancellationToken)
         {
-            var manager = await _managerRepository.GetAsync(command.ManagerId) 
+            var manager = await _managerRepository.GetAsync(command.ManagerId)
                 ?? throw new UserNotFoundException(command.ManagerId);
+            var task = manager.Tasks.FirstOrDefault(t => t.Name.ToLower() == command.TaskName.ToLower())
+               ?? throw new TaskNotFoundException(command.TaskName);
+            if (task.WorkerId is not null)
+                throw new TaskAlreadyAssignedException(task.WorkerId);
             var worker = await _workerRepository.GetAsync(command.WorkerId)
                 ?? throw new UserNotFoundException(command.WorkerId);
-            var task = manager.Tasks.FirstOrDefault(t => t.Name.ToLower() == command.TaskName.ToLower())
-                ?? throw new TaskNotFoundException(command.TaskName);
-            if(task.WorkerId is not null) 
-                throw new TaskAlreadyAssignedException(task.WorkerId);
-            if(manager.Id != _userContextService.UserId)
+            if (worker.AssignedTask is not null)
+                throw new WorkerHasAlreadyAssignedTaskException(worker.Id);
+            if (manager.Id != _userContextService.UserId)
                 throw new TaskAssignmentNotAllowedException();
 
 
