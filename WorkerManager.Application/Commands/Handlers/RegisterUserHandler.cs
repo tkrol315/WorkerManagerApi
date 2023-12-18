@@ -24,7 +24,7 @@ namespace WorkerManager.Application.Commands.Handlers
         public async Task<Unit> Handle(RegisterUser command, CancellationToken cancellationToken)
         {
             if (await _userRepository.AlreadyExistsByUserNameAsync(command.Dto.Username))
-                throw new UserWithUserNameAlreadyExistException(command.Dto.Username);
+                throw new UserWithUsernameAlreadyExistException(command.Dto.Username);
 
             if (!command.Dto.Password.Equals(command.Dto.ConfirmPassword))
                 throw new PasswordsDontMatchException();

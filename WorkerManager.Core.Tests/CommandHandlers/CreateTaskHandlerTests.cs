@@ -49,7 +49,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             var result = await _handler.Handle(_command, CancellationToken.None);
 
             //assert
-
+            
             result.Should().NotBeNull();
             result.Should().BeOfType<Unit>();
             _repositoryMock.Verify(r => r.GetAsync(_managerId), Times.Once);
