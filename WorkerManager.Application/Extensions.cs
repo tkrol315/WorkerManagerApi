@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using WorkerManager.Application.Behaviors;
 using WorkerManager.Domain.Entities;
 
 namespace WorkerManager.Application
@@ -13,6 +15,7 @@ namespace WorkerManager.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
             return services;
         }
     }
