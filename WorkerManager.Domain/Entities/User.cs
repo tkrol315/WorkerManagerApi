@@ -1,4 +1,6 @@
-﻿namespace WorkerManager.Domain.Entities
+﻿using WorkerManager.Domain.Enums;
+
+namespace WorkerManager.Domain.Entities
 {
     public abstract class User
     {
@@ -6,7 +8,7 @@
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
-        public uint RoleId { get; set; }
+        public uint RoleId { get; set; } = (int)Roles.Worker;
       
     }   
 }

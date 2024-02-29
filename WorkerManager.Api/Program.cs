@@ -1,3 +1,4 @@
+using WorkerManager.Api;
 using WorkerManager.Application;
 using WorkerManager.Infrastructure;
 using WorkerManager.Infrastructure.EF.Seeder;
@@ -16,13 +17,12 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-var scope = app.Services.CreateScope();
-var seeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();
-await seeder.Seed();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.ApplyMigrations();
+    app.Seed();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

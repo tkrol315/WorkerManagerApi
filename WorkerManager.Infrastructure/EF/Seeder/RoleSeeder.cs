@@ -13,9 +13,9 @@ namespace WorkerManager.Infrastructure.EF.Seeder
             _context = context;
         }
 
-        public async System.Threading.Tasks.Task Seed()
+        public void Seed()
         {
-            if(!await _context.Roles.AnyAsync())
+            if(!_context.Roles.Any())
             {
                 var roles = new List<Role>()
                 {
@@ -30,8 +30,8 @@ namespace WorkerManager.Infrastructure.EF.Seeder
                         Name = "Manager"
                     }
                 };
-                await _context.Roles.AddRangeAsync(roles);
-                await _context.SaveChangesAsync();
+                _context.Roles.AddRange(roles);
+                _context.SaveChanges();
             }
         }
     }
