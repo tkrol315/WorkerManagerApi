@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  workermanager.api:
+    image: ${DOCKER_REGISTRY-}workermanagerapi
+    container_name: workermanager.api
+    build:
+      context: .
+      dockerfile: WorkerManager.Api/Dockerfile
+    ports:
+        - "5000:5000"
+        - "5001:5001"
+  workermanager.database:
+    image: postgres:latest
+    container_name: workermanager.database
+    environment:
+        - POSTGRES_DB=workermanager
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=admin
+    volumes:
+        - ./.containers/workermanager-db:/var/lib/postgresql/data
+    ports:
+        - 5432:5432    
