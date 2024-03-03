@@ -11,7 +11,7 @@ enabling them to be assigned new tasks.
 - **Register**: Allows users to regiser.
   - **Method**: POST
   - **Endpoint**: `/api/account`
-  - 
+    
 - **Login**: Allows users to login.
   - **Method**: POST
   - **Endpoint**: `/api/account`
