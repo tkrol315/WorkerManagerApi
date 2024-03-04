@@ -1,7 +1,6 @@
 using WorkerManager.Api;
 using WorkerManager.Application;
 using WorkerManager.Infrastructure;
-using WorkerManager.Infrastructure.EF.Seeder;
 using WorkerManager.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,11 +26,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseShared();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

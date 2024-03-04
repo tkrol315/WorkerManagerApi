@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WorkerManager.Shared.Abstractions.Exceptions
+﻿namespace WorkerManager.Shared.Abstractions.Exceptions
 {
     public abstract class WorkerManagerException : Exception
     {
-        protected WorkerManagerException(string message) : base(message) { }
+        public int StatusCode { get; set; }
+        protected WorkerManagerException(string message,int statusCode) : base(message) { StatusCode = statusCode; }
     }
 }

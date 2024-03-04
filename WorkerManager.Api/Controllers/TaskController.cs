@@ -20,7 +20,7 @@ namespace WorkerManager.Api.Controllers
         }
 
         /// <summary>
-        /// Gets manager tasks
+        /// Gets manager's tasks
         /// </summary>
         /// <param name="id">Manager's ID</param>
         /// <returns>List of manager tasks</returns>

@@ -1,11 +1,12 @@
-﻿using WorkerManager.Shared.Abstractions.Exceptions;
+﻿using Microsoft.AspNetCore.Http;
+using WorkerManager.Shared.Abstractions.Exceptions;
 
 namespace WorkerManager.Application.Exceptions
 {
     public class TaskAlreadyExistsException : WorkerManagerException
     {
         public TaskAlreadyExistsException(Guid id, string taskName) 
-            : base($"Manager with id '{id}' already have task named '{taskName}'")
+            : base($"Manager with id '{id}' already have task named '{taskName}'", StatusCodes.Status400BadRequest)
         {
         }
     }

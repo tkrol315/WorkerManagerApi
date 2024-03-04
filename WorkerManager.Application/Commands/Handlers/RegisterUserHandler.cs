@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using WorkerManager.Application.Exceptions;
 using WorkerManager.Application.Repositories;
 using WorkerManager.Domain.Entities;
+using WorkerManager.Domain.Enums;
 
 namespace WorkerManager.Application.Commands.Handlers
 {
@@ -23,6 +24,9 @@ namespace WorkerManager.Application.Commands.Handlers
 
         public async Task<Unit> Handle(RegisterUser command, CancellationToken cancellationToken)
         {
+            if (await _userRepository.AlreadyExistsByUserIdAsync(command.Dto.Id))
+                throw new UserWithUserIdAlreadyExistsException(command.Dto.Id);
+
             if (await _userRepository.AlreadyExistsByUserNameAsync(command.Dto.Username))
                 throw new UserWithUsernameAlreadyExistException(command.Dto.Username);
 
@@ -31,12 +35,11 @@ namespace WorkerManager.Application.Commands.Handlers
             
 
             User createdUser;
-            if(command.Dto.RoleId == 1)
+            if(command.Dto.RoleId == (int)Roles.Worker)
                 createdUser = _mapper.Map<Worker>(command.Dto);
             
-            else if(command.Dto.RoleId == 2)
+            else if(command.Dto.RoleId == (int)Roles.Manager)
                 createdUser = _mapper.Map<Manager>(command.Dto);
-            
             else
                 throw new RoleIdOutOfRangeException();
             

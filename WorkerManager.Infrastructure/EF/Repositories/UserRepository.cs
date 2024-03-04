@@ -20,11 +20,14 @@ namespace WorkerManager.Infrastructure.EF.Repositories
            await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> AlreadyExistsByUserIdAsync(Guid id)
+            => await _context.Users.AnyAsync(u => u.Id == id);
+
         public async Task<bool> AlreadyExistsByUserNameAsync(string username)
             => await _context.Users
             .AnyAsync(u => u.Username == username);
         
-
+       
         public async Task<User?> GetUserByNameAsync(string username)
             => await _context.Users
             .Include(u => u.Role)
