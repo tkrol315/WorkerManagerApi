@@ -11,16 +11,11 @@ namespace WorkerManager.Application.Commands.Handlers
 {
     public class RegisterUserHandler : IRequestHandler<RegisterUser, Unit>
     {
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
         private readonly IUserFactoryProviderService _userFactoryProviderService;
 
-        public RegisterUserHandler(IPasswordHasher<User> passwordHasher,
-            IMapper mapper, IUserRepository userRepository, IUserFactoryProviderService userFactoryProviderService)
+        public RegisterUserHandler(IUserRepository userRepository, IUserFactoryProviderService userFactoryProviderService)
         {
-            _passwordHasher = passwordHasher;
-            _mapper = mapper;
             _userRepository = userRepository;
             _userFactoryProviderService = userFactoryProviderService;
         }
@@ -40,7 +35,6 @@ namespace WorkerManager.Application.Commands.Handlers
             var userFactory = _userFactoryProviderService.GetFactory((Roles)command.Dto.RoleId);
             var createdUser = userFactory.CreateUser(command.Dto);
 
-            createdUser.PasswordHash = _passwordHasher.HashPassword(createdUser, command.Dto.Password);
             await _userRepository.AddAsync(createdUser);
             return Unit.Value;
         }

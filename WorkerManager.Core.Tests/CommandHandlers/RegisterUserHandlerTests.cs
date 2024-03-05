@@ -1,29 +1,26 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Moq;
 using WorkerManager.Application.Commands;
 using WorkerManager.Application.Commands.Handlers;
 using WorkerManager.Application.Dto;
 using WorkerManager.Application.Exceptions;
-using WorkerManager.Application.Profiles;
+using WorkerManager.Application.Factories;
 using WorkerManager.Application.Repositories;
+using WorkerManager.Application.Services;
 using WorkerManager.Domain.Entities;
+using WorkerManager.Domain.Enums;
 
 namespace WorkerManager.Core.Tests.CommandHandlers
 {
     public class RegisterUserHandlerTests
     {
-        private readonly Mock<IPasswordHasher<User>> _passwordHasherMock;
         private readonly Mock<IUserRepository> _userRepositoryMock;
-        private readonly IMapper _mapper;
+        private readonly Mock<IUserFactoryProviderService> _userFactoryProviderServiceMock;
         public RegisterUserHandlerTests()
         {
-            _passwordHasherMock = new();
             _userRepositoryMock = new();
-            var mapperConfiguration = new MapperConfiguration(cfg => cfg.AddProfile<UserMappingProfile>());
-            _mapper = mapperConfiguration.CreateMapper();
+            _userFactoryProviderServiceMock = new();
         }
         [Fact]
         public async System.Threading.Tasks.Task Handle_Register_User_Success()
@@ -37,9 +34,11 @@ namespace WorkerManager.Core.Tests.CommandHandlers
                 RoleId = 1
             };
             _userRepositoryMock.Setup(r => r.AlreadyExistsByUserNameAsync(userDto.Username)).ReturnsAsync(false);
-            _passwordHasherMock.Setup(p => p.HashPassword(It.IsAny<User>(), It.IsAny<string>())).Returns(It.IsAny<string>());
+            var userFactoryMock = new Mock<IUserFactory>();
+            userFactoryMock.Setup(f => f.CreateUser(userDto)).Returns(It.IsAny<Worker>());
+            _userFactoryProviderServiceMock.Setup(f => f.GetFactory((Roles)userDto.RoleId)).Returns(userFactoryMock.Object);
             var command = new RegisterUser(userDto);
-            var handler = new RegisterUserHandler(_passwordHasherMock.Object, _mapper, _userRepositoryMock.Object);
+            var handler = new RegisterUserHandler(_userRepositoryMock.Object, _userFactoryProviderServiceMock.Object);
             
             //act
             var result = await handler.Handle(command, CancellationToken.None); 
@@ -49,7 +48,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             result.Should().BeOfType<Unit>();
             _userRepositoryMock.Verify(r => r.AlreadyExistsByUserNameAsync(userDto.Username), Times.Once);
             _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once);
-            _passwordHasherMock.Verify(p => p.HashPassword(It.IsAny<User>(), It.IsAny<string>()), Times.Once);
+            _userFactoryProviderServiceMock.Verify(r => r.GetFactory((Roles)userDto.RoleId), Times.Once);
         }
 
         [Fact]
@@ -65,7 +64,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             };
             _userRepositoryMock.Setup(r => r.AlreadyExistsByUserNameAsync(userDto.Username)).ReturnsAsync(true);
             var command = new RegisterUser(userDto);
-            var handler = new RegisterUserHandler(_passwordHasherMock.Object, _mapper, _userRepositoryMock.Object);
+            var handler = new RegisterUserHandler(_userRepositoryMock.Object, _userFactoryProviderServiceMock.Object);
 
             //act
             var act = ()=> handler.Handle(command, CancellationToken.None);
@@ -74,7 +73,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             await act.Should().ThrowAsync<UserWithUsernameAlreadyExistException>();
             _userRepositoryMock.Verify(r => r.AlreadyExistsByUserNameAsync(userDto.Username), Times.Once);
             _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
-            _passwordHasherMock.Verify(p => p.HashPassword(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+            _userFactoryProviderServiceMock.Verify(r => r.GetFactory((Roles)userDto.RoleId), Times.Never);
         }
         [Fact]
         public async System.Threading.Tasks.Task Handle_Throws_PasswordsDontMatchException_When_Password_And_ConfirmPassword_Are_Different()
@@ -89,7 +88,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             };
             _userRepositoryMock.Setup(r => r.AlreadyExistsByUserNameAsync(userDto.Username)).ReturnsAsync(false);
             var command = new RegisterUser(userDto);
-            var handler = new RegisterUserHandler(_passwordHasherMock.Object, _mapper, _userRepositoryMock.Object);
+            var handler = new RegisterUserHandler(_userRepositoryMock.Object, _userFactoryProviderServiceMock.Object);
 
             //act
             var act = () => handler.Handle(command, CancellationToken.None);
@@ -98,7 +97,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             await act.Should().ThrowAsync<PasswordsDontMatchException>();
             _userRepositoryMock.Verify(r => r.AlreadyExistsByUserNameAsync(userDto.Username), Times.Once);
             _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
-            _passwordHasherMock.Verify(p => p.HashPassword(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+            _userFactoryProviderServiceMock.Verify(r => r.GetFactory((Roles)userDto.RoleId), Times.Never);
         }
 
         [Fact]
@@ -113,8 +112,9 @@ namespace WorkerManager.Core.Tests.CommandHandlers
                 RoleId = 3
             };
             _userRepositoryMock.Setup(r => r.AlreadyExistsByUserNameAsync(userDto.Username)).ReturnsAsync(false);
+            _userFactoryProviderServiceMock.Setup(f => f.GetFactory((Roles)userDto.RoleId)).Throws<RoleIdOutOfRangeException>();
             var command = new RegisterUser(userDto);
-            var handler = new RegisterUserHandler(_passwordHasherMock.Object, _mapper, _userRepositoryMock.Object);
+            var handler = new RegisterUserHandler(_userRepositoryMock.Object, _userFactoryProviderServiceMock.Object);
 
             //act
             var act = () => handler.Handle(command, CancellationToken.None);
@@ -123,7 +123,7 @@ namespace WorkerManager.Core.Tests.CommandHandlers
             await act.Should().ThrowAsync<RoleIdOutOfRangeException>();
             _userRepositoryMock.Verify(r => r.AlreadyExistsByUserNameAsync(userDto.Username), Times.Once);
             _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
-            _passwordHasherMock.Verify(p => p.HashPassword(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+            _userFactoryProviderServiceMock.Verify(r => r.GetFactory((Roles)userDto.RoleId), Times.Once);
         }
     }
 }
